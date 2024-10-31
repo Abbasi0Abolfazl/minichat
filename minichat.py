@@ -66,7 +66,8 @@ class MiniChat:
                 self.handle_messages()
             except (IOError, EOFError):
                 if self.running:
-                    self.add_message('Host has disconnected.')
+                    self.add_message('Host has disconnected. Retrying in 5 seconds...')
+                    time.sleep(5)
             except AuthenticationError:
                 self.add_message('Wrong password.')
                 self.stop()
@@ -77,6 +78,7 @@ class MiniChat:
                 message = self.connection.recv()
                 self.add_message(message)
             except (EOFError, ConnectionResetError):
+                print('Host has disconnected.')
                 self.stop()
                 break
         self.connection.close()
