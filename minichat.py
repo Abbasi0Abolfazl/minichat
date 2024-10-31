@@ -29,6 +29,7 @@ class MiniChat:
         self.chat_log.append(message)
         self.clear_console()
         print('\n'.join(self.chat_log))
+        print(f"{self.nickname} >> ", end='', flush=True)  
 
     def run_host(self):
         self._run_threaded(self._run_host_forever)
@@ -88,7 +89,7 @@ class MiniChat:
             while self.running and not self.connection:
                 time.sleep(0.2)
             if self.connection:
-                text = input(f"{self.nickname} >> ")
+                text = input()  
                 if text.strip():  
                     message = f"{self.nickname}: {text}"  
                     self.add_message(message)  
