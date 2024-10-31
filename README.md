@@ -1,28 +1,51 @@
-Minichat
-========
+# MiniChat
 
-A mini chat server/client running in a DOS/shell using Python and multiprocessing.
+MiniChat is a simple chat server/client application built using Python's `multiprocessing` module, specifically utilizing `Listener` and `Client` for inter-process communication. This project serves as a lightweight chat solution that can run in a command-line interface (CLI) on both Windows and Linux systems.
 
-This was mostly to play with the multiprocessing module (Listener/Client).
+## Features
 
-Tested with python 2.7.2 (Windows 7) and python 2.7.4 (Ubuntu Server 13.04).
+- **Multi-threaded**: Runs the server and client in separate threads, allowing for simultaneous message handling and user input.
+- **Authentication**: Uses a simple password mechanism to authenticate clients connecting to the server.
+- **Cross-platform**: Tested on both Windows and Linux environments.
+- **Clear Console**: Clears the console for a cleaner chat log display.
 
 ## Usage
 
+To run the MiniChat application, you need to specify whether you want to start a server or connect as a client. The command-line arguments are as follows:
+
+### Server
+
+To start the chat server, use the following command:
+
+```bash
+python minichat.py -host host:port nickname password
 ```
-usage server: python minichat.py -host host:port nickname password
-usage client: python minichat.py -connect host:port nickname password
-CTRL+C to exit.'
+
+### Client
+
+To connect to an existing chat server, use the following command:
+
+```bash
+python minichat.py -connect host:port nickname password
 ```
 
-![minichat-host-windows](http://www.shazbits.com/images/minichat-host-windows.png)
+### Example
 
-![minichat-client-linux](http://www.shazbits.com/images/minichat-client-linux.png)
+1. **Start the server**:
+   ```bash
+   python minichat.py -host 127.0.0.1:5000 Alice secret
+   ```
 
-## ISC License
+2. **Connect a client**:
+   ```bash
+   python minichat.py -connect 127.0.0.1:5000 Bob secret
+   ```
 
-https://github.com/shazbits/minichat/blob/master/LICENSE.txt
+### Exit
 
-Romain Dura
+To exit the chat, press `CTRL+C`.
 
-http://www.shazbits.com
+## License
+
+This project is licensed under the ISC License. For more details, please refer to the [LICENSE.txt](https://github.com/shazbits/minichat/blob/master/LICENSE.txt).
+
