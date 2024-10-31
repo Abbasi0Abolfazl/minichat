@@ -1,12 +1,11 @@
-from multiprocessing.connection import Listener
-from multiprocessing.connection import Client
+from multiprocessing.connection import Listener, Client
 from multiprocessing import AuthenticationError
 import threading
 import time
 import sys
 import os
 
-class MiniChat(object):
+class MiniChat:
     def __init__(self, host_and_port, nickname, auth_key):
         self.chat_log = []
         self.host, self.port = host_and_port.split(':')
@@ -16,6 +15,9 @@ class MiniChat(object):
         self.running = True
         self.connection = None
         self.listener = None
+        self.clear_console()
+
+    def clear_console(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def stop(self):
@@ -25,7 +27,7 @@ class MiniChat(object):
 
     def add_message(self, message):
         self.chat_log.append(message)
-        os.system('cls' if os.name == 'nt' else 'clear')
+        self.clear_console()
         print('\n'.join(self.chat_log))
 
     def run_host(self):
@@ -41,7 +43,7 @@ class MiniChat(object):
         self.handle_inputs()
 
     def _run_host_forever(self):
-        self.add_message('Chat server running on port %d' % self.port)
+        self.add_message(f'Chat server running on port {self.port}')
         self.listener = Listener((self.host, self.port), authkey=self.auth_key.encode())
         while self.running:
             try:
@@ -56,7 +58,7 @@ class MiniChat(object):
         self.listener.close()
 
     def _run_client_forever(self):
-        self.add_message('Connecting to chat server %s on port %d' % (self.host, self.port))
+        self.add_message(f'Connecting to chat server {self.host} on port {self.port}')
         while self.running:
             try:
                 self.connection = Client((self.host, self.port), authkey=self.auth_key.encode())
@@ -71,7 +73,12 @@ class MiniChat(object):
 
     def handle_messages(self):
         while self.running:
-            self.add_message(self.connection.recv())
+            try:
+                message = self.connection.recv()
+                self.add_message(message)
+            except (EOFError, ConnectionResetError):
+                self.stop()
+                break
         self.connection.close()
 
     def handle_inputs(self):
@@ -79,10 +86,14 @@ class MiniChat(object):
             while self.running and not self.connection:
                 time.sleep(0.2)
             if self.connection:
-                text = self.nickname + ': ' + input()  
-                self.add_message(text)
-                self.connection.send(text)
+                text = input(f"{self.nickname} >> ")
+                if text.strip():  
+                    message = f"{self.nickname}: {text}"  
+                    self.add_message(message)  
+                    self.connection.send(message)  
 
+
+                    
 if __name__ == '__main__':
     if len(sys.argv) < 5:
         print('usage server: python minichat.py -host host:port nickname password \nusage client: python minichat.py -connect host:port nickname password\nCTRL+C to exit.')
